@@ -9,60 +9,85 @@ namespace ConsoleApp2
     {
         static void Main(string[] args)
         {
+            while (true)
+            {
+                Console.Clear();
+                MenuSys();
+                var ans = Console.ReadLine();
+                int choice = 0;
+                int.TryParse(ans, out choice);
+                MenuChoice(choice);
+                
+            }
+
+
+        }
+
+        private static void MenuSys()
+        {
+           Console.WriteLine("Book of numbers" +
+                Environment.NewLine + "1. New contact" +
+                Environment.NewLine + "2. Change contact" +
+                Environment.NewLine + "3. Search contact" + 
+                Environment.NewLine + "4. Close");
+        }
+
+        private static void MenuChoice(int menuChoice)
+        {
+            switch(menuChoice)
+            {
+                case 1:
+                    InsertNewContact();
+                    break;
+                case 2:
+                    UpdateContact();
+                    break;
+                case 3:
+                    SearchContact();
+                    break;
+                case 4:
+                    //wtf do I do here?
+                default:
+                    Console.WriteLine("1, 2, 3, or 4 please.");
+                    Console.ReadLine();
+                    break;
+            }
+        }
+
+        private static void InsertNewContact()
+        {
             DBConnect dbCon = new DBConnect();
-            Console.WriteLine("This yo' phonebook motherfucker!" +
-                Environment.NewLine + "1. Add some new motherfucker" + 
-                Environment.NewLine + "2. Some motherfucker changed their number" +
-                Environment.NewLine + "3. Search for a motherfucker");
-            var ans = Console.ReadLine();
-            int choice=0;
-            if (int.TryParse(ans, out choice))
-            {
-                switch (choice)
-                {
-                    case 1:
-                        Console.Clear();
-                        Console.Write("What's this motherfuckers name?");
-                        string name = Console.ReadLine();
-                        Console.WriteLine();
-                        Console.Write("What's this motherfuckers digits?");
-                        string tel = Console.ReadLine();
-                        dbCon.Insert(name, tel);
-                        return;
-                    case 2:
-                       
-                        Console.Clear();
-                        Console.Write("Which motherfucker changed their number?");
-                        string nameU = Console.ReadLine();
-                        Console.WriteLine();
-                        Console.Write("What did that motherfucker change their digits to?");
-                        string telU = Console.ReadLine();
-                        dbCon.Update(nameU, telU);
-                        return;
+            Console.Clear();
+            Console.Write("Please enter their name: ");
+            string name = Console.ReadLine();
+            Console.WriteLine();
+            Console.Write("Please enter their number: ");
+            string tel = Console.ReadLine();
+            dbCon.Insert(name, tel);
+        }
 
-                        
-                    case 3:
-                        Console.Clear();
-                        Console.WriteLine("Enter your search query");
-                        foreach (var item in dbCon.Select(Console.ReadLine()))
-                        {
-                            Console.Write(item.Name + " || " + item.Tel);
-                        }
-                        Console.ReadLine();
-                        return;
-                    default:
-                        Console.WriteLine("Yo, input a number dickface.");
-                        Console.ReadLine();
-                        return;
-                }
-            }
-            else
-            {
-                Console.WriteLine("Yo, input a number dickface.");
-                Console.ReadLine();
-            }
-            
+        private static void UpdateContact()
+        {
+            DBConnect dbCon = new DBConnect();
+            Console.Clear();
+            Console.Write("Who changed their number? ");
+            string nameU = Console.ReadLine();
+            Console.WriteLine();
+            Console.Write("What did they change their number to? ");
+            string telU = Console.ReadLine();
+            dbCon.Update(nameU, telU);
+        }
 
+        private static void SearchContact()
+        {
+            DBConnect dbCon = new DBConnect();
+            Console.Clear();
+            Console.WriteLine("Enter your search query");
+            foreach (var item in dbCon.Select(Console.ReadLine()))
+            {
+                Console.Write(item.Name + " || " + item.Tel);
+            }
+            Console.ReadLine();
         }
 
     }

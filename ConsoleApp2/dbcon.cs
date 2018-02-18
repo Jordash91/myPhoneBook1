@@ -86,6 +86,7 @@ namespace ConsoleApp2
                 //Execute command
                 cmd.ExecuteNonQuery();
 
+
                 //Close connection
                 this.CloseConnection();
             }
@@ -151,9 +152,9 @@ namespace ConsoleApp2
                 while (dataReader.Read())
                 {
                     var contact = new Contact();
-                    contact.Id = dataReader.GetInt32(0);
-                    contact.Name = dataReader.GetString(1);
-                    contact.Tel = dataReader.GetString(2);
+                    //contact.Id = dataReader.GetInt32(0);
+                    contact.Name = dataReader.GetString(0);
+                    contact.Tel = dataReader.GetString(1);
                     list.Add(contact);
                 }
                 //close Data Reader
@@ -207,7 +208,7 @@ namespace ConsoleApp2
     }
     public class Contact
     {
-        public int Id { get; set; }
+        //public int Id { get; set; }
         public string Name { get; set; }
         public string Tel { get; set; }
     }
