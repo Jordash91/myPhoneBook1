@@ -16,8 +16,9 @@ namespace ConsoleApp2
                 var ans = Console.ReadLine();
                 int choice = 0;
                 int.TryParse(ans, out choice);
-                MenuChoice(choice);
-                
+                if(!MenuChoice(choice)){
+                    break;
+                }              
             }
 
 
@@ -32,7 +33,7 @@ namespace ConsoleApp2
                 Environment.NewLine + "4. Close");
         }
 
-        private static void MenuChoice(int menuChoice)
+        private static bool MenuChoice(int menuChoice)
         {
             switch(menuChoice)
             {
@@ -46,12 +47,13 @@ namespace ConsoleApp2
                     SearchContact();
                     break;
                 case 4:
-                    //wtf do I do here?
+                    return false;
                 default:
                     Console.WriteLine("1, 2, 3, or 4 please.");
                     Console.ReadLine();
                     break;
             }
+            return true;
         }
 
         private static void InsertNewContact()
