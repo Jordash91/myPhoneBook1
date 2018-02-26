@@ -75,17 +75,21 @@ namespace ConsoleApp2
         //Insert statement
         public void Insert(string name, string tel)
         {
-            string query = "INSERT INTO contacts (name, tel) VALUES ('" + name + "', '" + tel + "')";
+            string query = "INSERT INTO contacts (name, tel) VALUES (@name, @tel)";
 
             //open connection
-            if (this.OpenConnection() == true)
+            if (this.OpenConnection())
             {
                 //create command and assign the query and connection from the constructor
                 MySqlCommand cmd = new MySqlCommand(query, connection);
 
+                //add parameters
+                cmd.Parameters.Add("@name", name);
+                cmd.Parameters.Add("@tel", tel);
+                cmd.Prepare();
+                
                 //Execute command
                 cmd.ExecuteNonQuery();
-
 
                 //Close connection
                 this.CloseConnection();
@@ -93,20 +97,21 @@ namespace ConsoleApp2
         }
 
         //Update statement
-        public void Update(string nameU, string telU)
+        public void Update(string name, string tel)
         {
 
-            string query = "UPDATE contacts SET tel='" + telU + "' WHERE name='" + nameU + "'";
+            string query = "UPDATE contacts SET tel=@tel WHERE name=@name";
 
             //open connection
-            if (this.OpenConnection() == true)
+            if (this.OpenConnection())
             {
-                //create mysql command
-                MySqlCommand cmd = new MySqlCommand();
-                //assign the query using commandtext
-                cmd.CommandText = query;
-                //assign the connection using connection
-                cmd.Connection = connection;
+                //create command and assign the query and connection from the constructor
+                MySqlCommand cmd = new MySqlCommand(query, connection);
+
+                //add parameters
+                cmd.Parameters.Add("@name", name);
+                cmd.Parameters.Add("@tel", tel);
+                cmd.Prepare();
 
                 //Execute query
                 cmd.ExecuteNonQuery();
