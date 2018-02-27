@@ -16,8 +16,9 @@ namespace ConsoleApp2
                 var ans = Console.ReadLine();
                 int choice = 0;
                 int.TryParse(ans, out choice);
-                MenuChoice(choice);
-                
+                if(!MenuChoice(choice)){
+                    break;
+                }              
             }
 
 
@@ -32,7 +33,7 @@ namespace ConsoleApp2
                 Environment.NewLine + "4. Close");
         }
 
-        private static void MenuChoice(int menuChoice)
+        private static bool MenuChoice(int menuChoice)
         {
             switch(menuChoice)
             {
@@ -46,12 +47,13 @@ namespace ConsoleApp2
                     SearchContact();
                     break;
                 case 4:
-                    //wtf do I do here?
+                    return false;
                 default:
                     Console.WriteLine("1, 2, 3, or 4 please.");
                     Console.ReadLine();
                     break;
             }
+            return true;
         }
 
         private static void InsertNewContact()
@@ -63,7 +65,23 @@ namespace ConsoleApp2
             Console.WriteLine();
             Console.Write("Please enter their number: ");
             string tel = Console.ReadLine();
-            dbCon.Insert(name, tel);
+            if (tel.Length <= 11)
+            {
+                dbCon.Insert(name, tel);
+                foreach (var item in dbCon.Select(name))
+                {
+                    Console.WriteLine(item.Name + " || " + item.Tel);
+                }
+                Console.ReadLine();
+            }
+            else
+            {
+                Console.WriteLine("Your number is too long, please enter up to 11 digits");
+                Console.WriteLine("Please, try again");
+                Console.ReadLine();
+                return;
+            }
+            //dbCon.Insert(name, tel);
         }
 
         private static void UpdateContact()
@@ -71,19 +89,20 @@ namespace ConsoleApp2
             DBConnect dbCon = new DBConnect();
             Console.Clear();
             Console.Write("Who changed their number? ");
-            string nameU = Console.ReadLine();
+            string name = Console.ReadLine();
             Console.WriteLine();
             Console.Write("What did they change their number to? ");
-            string telU = Console.ReadLine();
-            dbCon.Update(nameU, telU);
+            string tel = Console.ReadLine();
+            dbCon.Update(name, tel);
         }
 
         private static void SearchContact()
         {
             DBConnect dbCon = new DBConnect();
             Console.Clear();
-            Console.WriteLine("Enter your search query");
-            foreach (var item in dbCon.Select(Console.ReadLine()))
+            Console.Write("Enter your search query: ");
+            string name = Console.ReadLine();
+            foreach (var item in dbCon.Select(name))
             {
                 Console.Write(item.Name + " || " + item.Tel);
             }

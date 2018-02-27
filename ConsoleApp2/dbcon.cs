@@ -13,7 +13,6 @@ namespace ConsoleApp2
         private string uid;
         private string password;
         
-
         //Constructor
         public DBConnect()
         {
@@ -75,38 +74,35 @@ namespace ConsoleApp2
         //Insert statement
         public void Insert(string name, string tel)
         {
-            string query = "INSERT INTO contacts (name, tel) VALUES ('" + name + "', '" + tel + "')";
-
-            //open connection
-            if (this.OpenConnection() == true)
+            string query = "INSERT INTO contacts (name, tel) VALUES (@name, @tel)";
+            if (this.OpenConnection())
             {
                 //create command and assign the query and connection from the constructor
                 MySqlCommand cmd = new MySqlCommand(query, connection);
-
+                cmd.Parameters.AddWithValue("@name", name);
+                cmd.Parameters.AddWithValue("@tel", tel);
+                cmd.Prepare();
                 //Execute command
                 cmd.ExecuteNonQuery();
-
-
                 //Close connection
                 this.CloseConnection();
             }
         }
 
         //Update statement
-        public void Update(string nameU, string telU)
+        public void Update(string name, string tel)
         {
-
-            string query = "UPDATE contacts SET tel='" + telU + "' WHERE name='" + nameU + "'";
+            string query = "UPDATE contacts SET tel=@tel WHERE name=@name";
 
             //open connection
             if (this.OpenConnection() == true)
             {
                 //create mysql command
-                MySqlCommand cmd = new MySqlCommand();
-                //assign the query using commandtext
-                cmd.CommandText = query;
-                //assign the connection using connection
-                cmd.Connection = connection;
+                MySqlCommand cmd = new MySqlCommand(query, connection);
+
+                cmd.Parameters.AddWithValue("@name", name);
+                cmd.Parameters.AddWithValue("@tel", tel);
+                cmd.Prepare();
 
                 //Execute query
                 cmd.ExecuteNonQuery();
@@ -119,7 +115,6 @@ namespace ConsoleApp2
         //Delete statement
         public void Delete()
         {
-
             string query = "DELETE FROM contacts WHERE name='Geoff'";
 
             if (this.CloseConnection() == true)
@@ -131,11 +126,10 @@ namespace ConsoleApp2
         }
 
         //Select statement
-
-        public List<Contact> Select(string searchQ)
+        public List<Contact> Select(string name)
         {
-            string query = "SELECT * FROM contacts WHERE name LIKE '" + searchQ + "';";
-
+            string query = "SELECT * FROM contacts WHERE name LIKE @name";
+            
             //Create a list to store the result
             var list = new List<Contact>();
             
@@ -144,6 +138,9 @@ namespace ConsoleApp2
             {
                 //Create command
                 MySqlCommand cmd = new MySqlCommand(query, connection);
+
+                cmd.Parameters.AddWithValue("@name", name);
+                cmd.Prepare();
 
                 //Create a data reader and Execute the command
                 MySqlDataReader dataReader = cmd.ExecuteReader();
@@ -164,47 +161,6 @@ namespace ConsoleApp2
             return list;
 
         }
-
-       
-        /*public List<string>[] Select()
-        {
-            string query = "SELECT * FROM contacts";
-
-            //Create a list to store the result
-            List<string>[] list = new List<string>[3];
-            list[0] = new List<string>();
-            list[1] = new List<string>();
-            list[2] = new List<string>();
-
-            //Open connection
-            if (this.OpenConnection() == true)
-            {
-                //Create command
-                MySqlCommand cmd = new MySqlCommand(query, connection);
-
-                //Create a data reader and Execute the command
-                MySqlDataReader dataReader = cmd.ExecuteReader();
-
-                //Read the data and store them in the list
-                while (dataReader.Read())
-                {
-                    list[0].Add(dataReader["id"] + "");
-                    list[1].Add(dataReader["name"] + "");
-                    list[2].Add(dataReader["tel"] + "");
-                }
-                //close Data Reader
-                dataReader.Close();
-
-                //close connection
-                this.CloseConnection();
-
-                return list;
-            }
-            else
-            {
-                return list;
-            }
-        } */
     }
     public class Contact
     {
