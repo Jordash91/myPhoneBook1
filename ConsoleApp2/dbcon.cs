@@ -21,7 +21,7 @@ namespace ConsoleApp2
 
         private void Initialize()
         {
-            server = "192.168.0.55";
+            server = "192.168.0.56";
             database = "phonebook";
             uid = "jordan";
             password = "123456";
@@ -44,8 +44,29 @@ namespace ConsoleApp2
                 switch (ex.Number)
                 {
                     case 0:
-                       Console.WriteLine("Cannot connect to server. Contact me");
-                        break;
+                       if (ex.Message.Contains("Unknown database 'phonebook'"))
+                        {
+                            // Creates the schema and phonebook with valid user credentials supplied above. 
+
+                            string connectionString;
+                            connectionString = "SERVER=" + server + ";" + "UID=" + uid + ";" + "PASSWORD=" + password + ";";
+                            connection = new MySqlConnection(connectionString);
+                            connection.Open();
+                            string query = ("CREATE SCHEMA `phonebook` ; CREATE TABLE `phonebook`.`contacts` (`id` INT NOT NULL AUTO_INCREMENT, `name` VARCHAR(45) NOT NULL, `tel` VARCHAR(11) NOT NULL, PRIMARY KEY(`id`), UNIQUE INDEX `idcontacts_UNIQUE` (`id` ASC)); ");
+                            MySqlCommand cmd = new MySqlCommand(query, connection);
+                            cmd.ExecuteNonQuery();
+                            this.CloseConnection();
+
+
+                            Console.WriteLine("No database existed, lets hope it exists now.");
+                            break;
+                        }
+                        else
+                        {
+                            Console.WriteLine("Cannot connect to server. Contact me");
+                            break;
+                        }
+                       
 
                     case 1045:
                         Console.WriteLine("Invalid username/password - fix your shit");
@@ -149,9 +170,9 @@ namespace ConsoleApp2
                 while (dataReader.Read())
                 {
                     var contact = new Contact();
-                    //contact.Id = dataReader.GetInt32(0);
-                    contact.Name = dataReader.GetString(0);
-                    contact.Tel = dataReader.GetString(1);
+                    contact.Id = dataReader.GetInt32(0);
+                    contact.Name = dataReader.GetString(1);
+                    contact.Tel = dataReader.GetString(2);
                     list.Add(contact);
                 }
                 //close Data Reader
@@ -164,7 +185,7 @@ namespace ConsoleApp2
     }
     public class Contact
     {
-        //public int Id { get; set; }
+        public int Id { get; set; }
         public string Name { get; set; }
         public string Tel { get; set; }
     }

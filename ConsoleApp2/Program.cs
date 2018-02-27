@@ -102,9 +102,10 @@ namespace ConsoleApp2
             Console.Clear();
             Console.Write("Enter your search query: ");
             string name = Console.ReadLine();
+            Console.WriteLine("ID || Name     || Telephone");
             foreach (var item in dbCon.Select(name))
             {
-                Console.Write(item.Name + " || " + item.Tel);
+                Console.WriteLine(item.Id + "    " + item.Name + "  " + item.Tel);
             }
             Console.ReadLine();
         }
